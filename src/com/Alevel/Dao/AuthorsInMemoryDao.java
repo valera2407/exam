@@ -12,38 +12,32 @@ public class AuthorsInMemoryDao implements AuthorsDao {
 
     @Override
     public void createAuthor(Authors author) {
-        author.setIdAuthor(generateId());
+        int size = authors.size();
+        int id = size + 1;
+        author.setIdAuthor(id);
         authors.add(author);
     }
 
     @Override
     public void updateAuthor(Authors author) {
-        Authors current = authors.stream().filter(a -> a.getIdAuthor().equals(author.getIdAuthor())).findFirst().get();
+        Authors current = findById(author.getIdAuthor());
         current.setName(author.getName());
-        current.setSunname(author.getSunname());
+        current.setSurname(author.getSurname());
         current.setBooksList(author.getBooksList());
     }
 
     @Override
-    public void deleteAuthor(String idAuhtor) {
-        authors.removeIf(a -> a.getIdAuthor().equals(idAuhtor));
+    public void deleteAuthor(int idAuhtor) {
+        authors.removeIf(a -> a.getIdAuthor() == idAuhtor);
     }
 
     @Override
-    public Authors findById(String idAuhtor) {
-        return  authors.stream().filter(a -> a.getIdAuthor().equals(idAuhtor)).findFirst().get();
+    public Authors findById(int idAuhtor) {
+        return  authors.stream().filter(a -> a.getIdAuthor() == idAuhtor).findFirst().get();
     }
 
     @Override
     public List<Authors> findAll() {
         return authors;
-    }
-
-    private String generateId() {
-        String idAuhtor = UUID.randomUUID().toString();
-        if (authors.stream().anyMatch(book -> book.getIdAuthor().equals(idAuhtor))) {
-            return generateId();
-        }
-        return idAuhtor;
     }
 }

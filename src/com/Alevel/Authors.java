@@ -4,18 +4,17 @@ import java.util.List;
 
 public class Authors {
 
-    String idAuthor;
-    String name;
-    String sunname;
-    List<Books> booksList;
+    private int idAuthor;
+    private String name;
+    private String surname;
+    private List<Books> booksList;
 
-    public void createAuthor(){}
 
-    public String getIdAuthor() {
+    public int getIdAuthor() {
         return idAuthor;
     }
 
-    public void setIdAuthor(String idAuthor) {
+    public void setIdAuthor(int idAuthor) {
         this.idAuthor = idAuthor;
     }
 
@@ -27,12 +26,12 @@ public class Authors {
         this.name = name;
     }
 
-    public String getSunname() {
-        return sunname;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setSunname(String sunname) {
-        this.sunname = sunname;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public List<Books> getBooksList() {
@@ -43,12 +42,16 @@ public class Authors {
         this.booksList = booksList;
     }
 
+    public void addBook(Books book){
+        booksList.add(book);
+    }
+
     @Override
     public String toString() {
         return "Authors{" +
                 "idAuthor='" + idAuthor + '\'' +
                 ", name='" + name + '\'' +
-                ", sunname='" + sunname + '\'' +
+                ", surname='" + surname + '\'' +
                 ", booksList=" + booksList +
                 '}';
     }

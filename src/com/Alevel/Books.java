@@ -4,15 +4,15 @@ import java.util.List;
 
 public class Books {
 
-    String idBook;
-    String name;
-    List<Authors> authorsList;
+    private int idBook;
+    private String name;
+    private List<Authors> authorsList;
 
-    public String getIdBook() {
+    public int getIdBook() {
         return idBook;
     }
 
-    public void setIdBook(String idBook) {
+    public void setIdBook(int idBook) {
         this.idBook = idBook;
     }
 
@@ -31,6 +31,10 @@ public class Books {
     public void setAuthorsList(List<Authors> authorsList) {
         this.authorsList = authorsList;
     }
+
+   /* public void addAuthor(Authors authors){
+        authorsList.add(authors);
+    }*/
 
     @Override
     public String toString() {

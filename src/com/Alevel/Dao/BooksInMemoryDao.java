@@ -12,25 +12,27 @@ public class BooksInMemoryDao implements BooksDao{
 
     @Override
     public void createBook(Books book) {
-        book.setIdBook(generateId());
+        int size = books.size();
+        int id = size + 1;
+        book.setIdBook(id);
         books.add(book);
     }
 
     @Override
     public void updateBook(Books book) {
-        Books current = books.stream().filter(b -> b.getIdBook().equals(book.getIdBook())).findFirst().get();
+        Books current = findById(book.getIdBook());
         current.setName(book.getName());
         current.setAuthorsList(book.getAuthorsList());
     }
 
     @Override
-    public void deleteBook(String idBook) {
-        books.removeIf(b -> b.getIdBook().equals(idBook));
+    public void deleteBook(int idBook) {
+        books.removeIf(b -> b.getIdBook() == idBook);
     }
 
     @Override
-    public Books findById(String idBook) {
-        return  books.stream().filter(b -> b.getIdBook().equals(idBook)).findFirst().get();
+    public Books findById(int idBook) {
+        return  books.stream().filter(b -> b.getIdBook() == idBook).findFirst().get();
     }
 
     @Override
@@ -38,11 +40,5 @@ public class BooksInMemoryDao implements BooksDao{
         return books;
     }
 
-    private String generateId() {
-        String idBook = UUID.randomUUID().toString();
-        if (books.stream().anyMatch(book -> book.getIdBook().equals(idBook))) {
-            return generateId();
-        }
-        return idBook;
-    }
+
 }
