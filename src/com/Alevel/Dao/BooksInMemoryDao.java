@@ -4,16 +4,15 @@ import com.Alevel.Books;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class BooksInMemoryDao implements BooksDao{
 
     private List<Books> books = new ArrayList<>();
 
+
     @Override
     public void createBook(Books book) {
-        int size = books.size();
-        int id = size + 1;
+        int id = (int) (Math.random()*1000);
         book.setIdBook(id);
         books.add(book);
     }
@@ -22,7 +21,6 @@ public class BooksInMemoryDao implements BooksDao{
     public void updateBook(Books book) {
         Books current = findById(book.getIdBook());
         current.setName(book.getName());
-        current.setAuthorsList(book.getAuthorsList());
     }
 
     @Override
@@ -39,6 +37,4 @@ public class BooksInMemoryDao implements BooksDao{
     public List<Books> findAll() {
         return books;
     }
-
-
 }

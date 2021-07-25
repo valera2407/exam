@@ -10,15 +10,31 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static java.lang.Integer.parseInt;
 
 public class Runer {
-
     private final AuthorsDao authorsDao = new AuthorsInMemoryDao();
+
     private final BooksDao booksDao = new BooksInMemoryDao();
 
+    private static int checkInt(BufferedReader reader) throws IOException {
+        String num;
+        num = reader.readLine();
+        while (!helper(num)) {
+            System.out.println("Entered value is not a number. Try again:");
+            num = reader.readLine();
+        }
+        return Integer.parseInt(num);
+    }
+
+    private static boolean helper (String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     public void run() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -75,43 +91,44 @@ public class Runer {
 
 
     private void runNavigation() {
-        System.out.println();
-        System.out.println("if you want create book, please enter 1");
-        System.out.println("if you want create author, please enter 2");
-        System.out.println("if you want update book, please enter 3");
-        System.out.println("if you want update author, please enter 4");
-        System.out.println("if you want delete book, please enter 5");
-        System.out.println("if you want delete author, please enter 6");
-        System.out.println("if you want findById book, please enter 7");
-        System.out.println("if you want findById author, please enter 8");
-        System.out.println("if you want findAll books, please enter 9");
-        System.out.println("if you want findAll authors, please enter 10");
-        System.out.println("if you want exit, please enter 'exit'");
-        System.out.println();
+        System.out.println("\n" + "if you want create book, please enter 1" + "\n" +
+                        "if you want create author, please enter 2" + "\n" +
+                        "if you want update book, please enter 3" + "\n" +
+                        "if you want update author, please enter 4" + "\n" +
+                        "if you want delete book, please enter 5" + "\n" +
+                        "if you want delete author, please enter 6" + "\n" +
+                        "if you want findById book, please enter 7" + "\n" +
+                        "if you want findById author, please enter 8" + "\n" +
+                        "if you want findAll books, please enter 9" + "\n" +
+                        "if you want findAll authors, please enter 10" + "\n" +
+                        "if you want exit, please enter 'exit'");
+
+
     }
 
     private void createBook(BufferedReader reader) {
+        System.out.println("\n" + "Let`s create new Book" + "\n");
         try{
-            System.out.println("Please, enter book name");
-            String name = reader.readLine();
             Books book = new Books();
             List<Authors> authors = new ArrayList<>();
-
+            System.out.println("Please, enter book name");
+            String name = reader.readLine();
             book.setName(name);
-            System.out.println("How authors you wanna add?");
-            int addAuthor = parseInt(reader);
+            System.out.println("How authors are you wanna add?");
+            int addAuthor = checkInt(reader);
             for (int i = 0; i < addAuthor; i++) {
-                Authors test = new Authors();
+                Authors author = new Authors();
                 System.out.println("Enter the name for " + (i + 1) + " author");
                 String nameAuthor = reader.readLine();
-                test.setName(nameAuthor);
+                author.setName(nameAuthor);
                 System.out.println("Enter the surname for " + (i + 1) + " author");
                 String surnameAuthor = reader.readLine();
-                test.setSurname(surnameAuthor);
-                authorsDao.createAuthor(test);
-                authors.add(test);
+                author.setSurname(surnameAuthor);
+                author.setBooks(book);
+                authorsDao.createAuthor(author);
+                authors.add(author);
+                book.setAuthor(author);
             }
-            book.setAuthorsList(authors);
             booksDao.createBook(book);
             System.out.println(book);
             } catch (IOException exception) {
@@ -120,29 +137,30 @@ public class Runer {
     }
 
     private void updateBook(BufferedReader reader) {
+        System.out.println("\n" + "Hmmm, so you want to change something in book" + "\n");
         try{
             System.out.println("Please, enter id");
-            int id = parseInt(reader);
+            int id = checkInt(reader);
             Books book = booksDao.findById(id);
-            List<Authors> authors = new ArrayList<>();
-
+            List<Authors> authors = book.getAuthorsList();
             System.out.println("Please, enter book name");
             String name = reader.readLine();
             book.setName(name);
-            System.out.println("How much authors you need?");
-            int changeAuthors = parseInt(reader);
+            System.out.println("How much authors do you need?");
+            int changeAuthors = checkInt(reader);
             for (int i = 0; i < changeAuthors; i++) {
-                Authors test = new Authors();
+                Authors authorChange = book.getAuthor();
                 System.out.println("Enter the name for " + (i + 1) + " author");
                 String nameAuthor = reader.readLine();
-                test.setName(nameAuthor);
-                System.out.println("Enter the name for " + (i + 1) + " author");
+                authorChange.setName(nameAuthor);
+                System.out.println("Enter the surname for " + (i + 1) + " author");
                 String surnameAuthor = reader.readLine();
-                test.setSurname(surnameAuthor);
-                authorsDao.updateAuthor(test);
-                authors.add(test);
+                authorChange.setSurname(surnameAuthor);
+                authorChange.setBooks(book);
+                authorsDao.updateAuthor(authorChange);
+                authors.add(authorChange);
+                book.setAuthor(authorChange);
             }
-            book.setAuthorsList(authors);
             booksDao.updateBook(book);
             System.out.println(book);
         } catch (IOException e) {
@@ -151,10 +169,10 @@ public class Runer {
     }
 
     private void deleteBook(BufferedReader reader) {
-        System.out.println("delete book");
+        System.out.println("\n" + "I see that you want delete book" + "\n");
         try {
             System.out.println("Please, enter id");
-            int id = parseInt(reader);
+            int id = checkInt(reader);
             booksDao.deleteBook(id);
         } catch (IOException e) {
             System.out.println("problem: = " + e.getMessage());
@@ -162,46 +180,48 @@ public class Runer {
     }
 
     private void findByIdBook(BufferedReader reader) {
-        System.out.println("findByIdBook");
+        System.out.println("\n" + "Do you have ID book?" + "\n");
         try {
             System.out.println("Please, enter id");
-            int id = parseInt(reader);
+            int id = checkInt(reader);
             Books book = booksDao.findById(id);
-            System.out.println("book = " + book);
+            System.out.println("book = " + book + " " + book.getAuthorsList());
         } catch (IOException e) {
             System.out.println("problem: = " + e.getMessage());
         }
     }
 
     private void findAllBook(BufferedReader reader) {
-        System.out.println("findAllBooks");
+        System.out.println("\n" + "I can show you everything" + "\n");
         List<Books> booksList = booksDao.findAll();
         for (Books books : booksList) {
-            System.out.println("books = " + books);
+            System.out.println("book = " + books + " " + books.getAuthorsList());
         }
     }
 
     private void createAuthor(BufferedReader reader) {
+        System.out.println("\n" + "Let`s create new Author" + "\n");
         try{
+            Authors author = new Authors();
+            List<Books> books = author.getBooksList();
             System.out.println("Please, enter author name");
             String name = reader.readLine();
+            author.setName(name);
             System.out.println("Please, enter author surname");
             String sunname = reader.readLine();
-            System.out.println("How match books you wanna add?");
-            List<Books> books = new ArrayList<>();
-            int addBooks = parseInt(reader);
+            author.setSurname(sunname);
+            System.out.println("How match books are you wanna add?");
+            int addBooks = checkInt(reader);
             for (int i = 0; i < addBooks; i++) {
-                Books test = new Books();
+                Books book = new Books();
                 System.out.println("Enter the name for " + (i + 1) + " book");
                 String nameBook = reader.readLine();
-                test.setName(nameBook);
-                booksDao.createBook(test);
-                books.add(test);
+                book.setName(nameBook);
+                book.setAuthor(author);
+                booksDao.createBook(book);
+                books.add(book);
+                author.setBooks(book);
             }
-            Authors author = new Authors();
-            author.setName(name);
-            author.setSurname(sunname);
-            author.setBooksList(books);
             authorsDao.createAuthor(author);
             System.out.println(author);
         } catch (IOException e) {
@@ -210,26 +230,30 @@ public class Runer {
     }
 
     private void updateAuthor(BufferedReader reader) {
+        System.out.println("\n" + "Hmmm, so you want to change something in author" + "\n");
         try{
             System.out.println("Please, enter id");
-            int id = parseInt(reader);
+            int id = checkInt(reader);
             Authors author = authorsDao.findById(id);
-            List<Books> book = new ArrayList<>();
-
-            System.out.println("Please, enter book name");
+            List<Books> book = author.getBooksList();
+            System.out.println("Please, enter author name");
             String name = reader.readLine();
             author.setName(name);
-            System.out.println("How much books you need?");
-            int changeBooks = parseInt(reader);
+            System.out.println("Please, enter author surname");
+            String sunname = reader.readLine();
+            author.setSurname(sunname);
+            System.out.println("How much books do you need?");
+            int changeBooks = checkInt(reader);
             for (int i = 0; i < changeBooks; i++) {
-                Books test = new Books();
+                Books bookChange = author.getBooks();
                 System.out.println("Enter the name for " + (i + 1) + " book");
                 String nameBook = reader.readLine();
-                test.setName(nameBook);
-                booksDao.updateBook(test);
-                book.add(test);
+                bookChange.setName(nameBook);
+                bookChange.setAuthor(author);
+                booksDao.updateBook(bookChange);
+                book.add(bookChange);
+                author.setBooks(bookChange);
             }
-            author.setBooksList(book);
             authorsDao.updateAuthor(author);
             System.out.println(author);
         } catch (IOException e) {
@@ -238,10 +262,10 @@ public class Runer {
     }
 
     private void deleteAuthor(BufferedReader reader) {
-        System.out.println("delete book");
+        System.out.println("\n" + "I see that you want delete author" + "\n");
         try {
             System.out.println("Please, enter id");
-            int id = parseInt(reader);
+            int id = checkInt(reader);
             authorsDao.deleteAuthor(id);
         } catch (IOException e) {
             System.out.println("problem: = " + e.getMessage());
@@ -249,41 +273,22 @@ public class Runer {
     }
 
     private void findByIdAuthor(BufferedReader reader) {
-        System.out.println("findByIdAuthor");
+        System.out.println("\n" + "Do you have ID author?" + "\n");
         try {
             System.out.println("Please, enter id");
-            int id = parseInt(reader);
+            int id = checkInt(reader);
             Authors author = authorsDao.findById(id);
-            System.out.println("author = " + author);
+            System.out.println("author = " + author + " " + author.getBooksList());
         } catch (IOException e) {
             System.out.println("problem: = " + e.getMessage());
         }
     }
 
     private void findAllAuthor(BufferedReader reader) {
-        System.out.println("findAllAuthors");
+        System.out.println("\n" + "I can show you everyone" + "\n");
         List<Authors> authorsList = authorsDao.findAll();
         for (Authors authors : authorsList) {
-            System.out.println("authors = " + authors);
-        }
-    }
-
-    private static int parseInt(BufferedReader reader) throws IOException {
-        String num;
-        num = reader.readLine();
-        while (!isDigit(num)) {
-            System.out.println("Entered value is not a number. Try again:");
-            num = reader.readLine();
-        }
-        return Integer.parseInt(num);
-    }
-
-    private static boolean isDigit(String s) throws NumberFormatException {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
+            System.out.println("authors = " + authors + " " + authors.getBooksList());
         }
     }
 }
