@@ -1,12 +1,25 @@
 package com.Alevel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Books {
 
     private int idBook;
     private String name;
-    private List<Authors> authorsList;
+
+    private Authors author;
+
+    private List<Authors> authorsList = new ArrayList<>();
+
+    public void setAuthor(Authors author) {
+        this.author = author;
+        authorsList.add(author);
+    }
+
+    public Authors getAuthor() {
+        return author;
+    }
 
     public int getIdBook() {
         return idBook;
@@ -32,16 +45,11 @@ public class Books {
         this.authorsList = authorsList;
     }
 
-   /* public void addAuthor(Authors authors){
-        authorsList.add(authors);
-    }*/
-
     @Override
     public String toString() {
         return "Books{" +
-                "idBook='" + idBook + '\'' +
+                "idBook=" + idBook +
                 ", name='" + name + '\'' +
-                ", authorsList=" + authorsList +
                 '}';
     }
 }
